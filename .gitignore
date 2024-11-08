@@ -1,0 +1,7 @@
+# hbsdl
+*.bak
+*.exe
+*.hbx
+build
+lib
+tmp

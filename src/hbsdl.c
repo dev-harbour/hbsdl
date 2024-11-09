@@ -114,7 +114,9 @@ static void hb_sdl_event_Return( SDL_Event *pSDL_Event )
       hb_ret();
 }
 
-/* ------------------------------------------------------------------------- */
+/* -------------------------------------------------------------------------
+static HBSDL
+------------------------------------------------------------------------- */
 static void sdl_cleanup( SDL *pSDL )
 {
    if( pSDL )
@@ -199,7 +201,87 @@ static size_t sdl_utf8Len( const char *utf8String )
    return len;
 }
 
-/* ------------------------------------------------------------------------- */
+static void sdl_Utf8CharExtract( const char *source, char *dest, size_t *index )
+{
+   unsigned char firstByte = source[ *index ];
+   size_t charLen = 1;
+
+   if( ( firstByte & 0x80 ) == 0x00 )       // ASCII (0xxxxxxx)
+      charLen = 1;
+   else if( ( firstByte & 0xE0 ) == 0xC0 )  // (110xxxxx)
+      charLen = 2;
+   else if( ( firstByte & 0xF0 ) == 0xE0 )  // (1110xxxx)
+      charLen = 3;
+   else if( ( firstByte & 0xF8 ) == 0xF0 )  // (11110xxx)
+      charLen = 4;
+
+   strncpy( dest, source + *index, charLen );
+   dest[ charLen ] = '\0';
+
+   *index += charLen;
+}
+
+static void sdl_DrawFont( SDL *pSdl, int x, int y, const char *string, const char *hexColor )
+{
+   x = x * pSdl->fontCellWidth;
+   y = y * pSdl->fontCellHeight;
+
+   SDL_Color bgColor = { 255, 255, 255, 255 };
+   SDL_Color fgColor = { 0, 0, 0, 255 };
+
+   if( hexColor && strlen( hexColor ) > 0 )
+   {
+      const char *separator = strchr( hexColor, '/' );
+      if( separator && ( separator - hexColor == 6 ) && strlen( separator + 1 ) == 6 )
+      {
+         char bgColorStr[ 7 ];
+         strncpy( bgColorStr, hexColor, 6 );
+         bgColorStr[ 6 ] = '\0';
+
+         bgColor = sdl_hex_to_color( bgColorStr );
+         fgColor = sdl_hex_to_color( separator + 1 );
+      }
+   }
+
+   size_t len = sdl_utf8Len( string );
+   if( len == 0 )
+   {
+      SDL_Rect rect = { x, y, pSdl->fontCellWidth, pSdl->fontCellHeight };
+      SDL_SetRenderDrawColor( pSdl->renderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a );
+      SDL_RenderFillRect( pSdl->renderer, &rect );
+      return;
+   }
+
+   SDL_Rect rect = { x, y, pSdl->fontCellWidth * len, pSdl->fontCellHeight };
+   SDL_SetRenderDrawColor( pSdl->renderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a );
+   SDL_RenderFillRect( pSdl->renderer, &rect );
+
+   SDL_Surface *textSurface = TTF_RenderUTF8_Shaded( pSdl->font, string, fgColor, bgColor );
+   SDL_Texture *textTexture = NULL;
+
+   if( textSurface )
+   {
+      textTexture = SDL_CreateTextureFromSurface( pSdl->renderer, textSurface );
+      SDL_FreeSurface( textSurface );
+   }
+   else
+   {
+      fprintf( stderr, "Error: rendering string: %s\n", TTF_GetError() );
+   }
+
+   if( textTexture )
+   {
+      SDL_Rect textRect = { x, y, 0, 0 };
+      SDL_QueryTexture( textTexture, NULL, NULL, &textRect.w, &textRect.h );
+      SDL_RenderCopy( pSdl->renderer, textTexture, NULL, &textRect );
+
+      SDL_DestroyTexture( textTexture );
+   }
+}
+
+/* -------------------------------------------------------------------------
+API HBSDL
+------------------------------------------------------------------------- */
 // SDL *sdl_CreateWindow( int width, int height, const char *title, const char *hexColor )
 HB_FUNC( SDL_CREATEWINDOW )
 {
@@ -721,6 +803,63 @@ HB_FUNC( SDL_GETMOUSESTATE )
       hb_retnint( SDL_GetMouseState( &x, &y ) );
       hb_storni( x, 1 );
       hb_storni( y, 2 );
+   }
+   else
+   {
+      HB_ERR_ARGS();
+   }
+}
+
+/* ------------------------------------------------------------------------- */
+// void sdl_DrawBox( SDL *pSdl, int x, int y, int width, int height, const char *boxString, const char *hexColor )
+HB_FUNC( SDL_DRAWBOX )
+{
+   if( hb_param( 1, HB_IT_POINTER ) != NULL && hb_param( 2, HB_IT_NUMERIC ) != NULL && hb_param( 3, HB_IT_NUMERIC ) != NULL
+                                            && hb_param( 4, HB_IT_NUMERIC ) != NULL && hb_param( 5, HB_IT_NUMERIC ) != NULL
+                                            && hb_param( 6, HB_IT_STRING ) != NULL &&  hb_param( 7, HB_IT_STRING ) != NULL )
+   {
+      SDL *pSdl = hb_sdl_Param( 1 );
+      int x = hb_parni( 2 );
+      int y = hb_parni( 3 );
+      int width = hb_parni( 4 );
+      int height = hb_parni( 5 );
+      const char *boxString = hb_parc( 6 );
+      const char *hexColor = hb_parc( 7 );
+
+      // Buffers for individual UTF-8 box-drawing characters (maximum 4 bytes + 1 for '\0')
+      char topLeft[ 5 ]     = { 0 };
+      char horizontal[ 5 ]  = { 0 };
+      char topRight[ 5 ]    = { 0 };
+      char vertical[ 5 ]    = { 0 };
+      char bottomRight[ 5 ] = { 0 };
+      char bottomLeft[ 5 ]  = { 0 };
+
+      // Extract each UTF-8 character from boxString
+      size_t index = 0;
+      sdl_Utf8CharExtract( boxString, topLeft, &index );
+      sdl_Utf8CharExtract( boxString, horizontal, &index );
+      sdl_Utf8CharExtract( boxString, topRight, &index );
+      sdl_Utf8CharExtract( boxString, vertical, &index );
+      sdl_Utf8CharExtract( boxString, bottomRight, &index );
+      sdl_Utf8CharExtract( boxString, bottomLeft, &index );
+
+      sdl_DrawFont( pSdl, x, y, topLeft, hexColor );                  // top-left corner
+      sdl_DrawFont( pSdl, x, y + height - 1, bottomLeft, hexColor );  // bottom-left corner
+
+      for( int i = 1; i < width - 1; i++ )
+      {
+         sdl_DrawFont( pSdl, x + i, y, horizontal, hexColor );               // top edge
+         sdl_DrawFont( pSdl, x + i, y + height - 1, horizontal, hexColor );  // bottom edge
+      }
+
+      for( int i = 1; i < height - 1; i++ )
+      {
+         sdl_DrawFont( pSdl, x, y + i, vertical, hexColor );              // left edge
+         sdl_DrawFont( pSdl, x + width - 1, y + i, vertical, hexColor );  // right edge
+      }
+
+      sdl_DrawFont( pSdl, x + width - 1, y, topRight, hexColor );                  // top-right corner
+      sdl_DrawFont( pSdl, x + width - 1, y + height - 1, bottomRight, hexColor );  // bottom-right corner
    }
    else
    {

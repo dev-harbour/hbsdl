@@ -791,6 +791,20 @@ HB_FUNC( SDL_SETWINDOWSIZE )
    }
 }
 
+// void sdl_setBackground( SDL *pSdl, const char *hexColor )
+HB_FUNC( SDL_SETBACKGROUND )
+{
+   if( hb_param( 1, HB_IT_POINTER ) != NULL && hb_param( 2, HB_IT_STRING ) != NULL )
+   {
+      SDL *pSdl = hb_sdl_Param( 1 );
+      const char *hexColor = hb_parc( 2 );
+      pSdl->background = hexColor;
+   }
+   else
+   {
+      HB_ERR_ARGS();
+   }
+}
 /* -------------------------------------------------------------------------
 CategoryMouse
 ------------------------------------------------------------------------- */

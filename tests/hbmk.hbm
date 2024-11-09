@@ -1,2 +1,4 @@
 hbsdl.hbc
--w3 -es2 -debug
+-w3 -es2
+-debug
+-optim

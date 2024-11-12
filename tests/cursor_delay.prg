@@ -24,22 +24,22 @@ PROCEDURE Main()
 
       currentTime := c_time()
 
-      // Sprawdź, czy należy przełączyć na `SDL_WaitEvent`
       IF( waitMode .OR. c_difftime( currentTime, lastEventTime ) >= 10 )
 
-         // Ustaw kursor na widoczny przed wejściem w tryb oczekiwania
+         // Wyświetl kursor na stałe i włącz tryb `WaitEvent`
          sdl_setCursorVisible( sdl, .T. )
          event := sdl_WaitEvent()
+
          IF( event != NIL )
-            lastEventTime := c_time() // Ustaw aktualny czas zdarzenia
-            waitMode := .F.           // Przełącz na tryb `PollEvent` przez 10 sekund
+            lastEventTime := currentTime // Ustaw czas dla aktywności
+            waitMode := .F.              // Przełącz na tryb `PollEvent` przez 10 sekund
          ENDIF
 
       ELSE
-         // Polling events przez 10 sekund po zdarzeniu
+         // Przechwytywanie zdarzeń w trybie `PollEvent`
          DO WHILE( ( event := sdl_PollEvent() ) != NIL )
 
-            lastEventTime := c_time() // Zaktualizuj czas dla każdego zdarzenia
+            lastEventTime := currentTime // Zaktualizuj czas dla aktywności
 
             SWITCH( sdl_EventType( event ) )
 
@@ -72,11 +72,10 @@ PROCEDURE Main()
             ENDSWITCH
 
          ENDDO
-         // Po 10 sekundach bez zdarzeń wróć do trybu `WaitEvent`
-         IF( c_difftime( currentTime, lastEventTime ) >= 10 )
-            waitMode := .T.
-         ENDIF
-
+      ENDIF
+      // Po 10 sekundach bez zdarzeń wróć do trybu `WaitEvent`
+      IF( c_difftime( c_time(), lastEventTime ) >= 10 )
+         waitMode := .T.
       ENDIF
 
       sdl_BeginDraw( sdl )

@@ -5,5 +5,6 @@
 #include "SDL_keycode.ch"
 #include "SDL_scancode.ch"
 #include "SDL_video.ch"
+#include "SDL_hbsdlbox.ch"
 
 #endif /* End HBSDL_CH_ */

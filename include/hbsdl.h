@@ -32,6 +32,11 @@ struct _SDL
    int           mouseX;
    int           mouseY;
 
+   int           cursorCol;
+   int           cursorRow;
+   SDL_TimerID   cursorTimer;
+   bool          cursorVisible;
+
    TTF_Font     *font;
    int           fontCellWidth;
    int           fontCellHeight;

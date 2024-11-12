@@ -16,6 +16,10 @@ static HB_GARBAGE_FUNC( hb_hbsdl_Destructor )
 
    if( ppSDL && *ppSDL )
    {
+      if( ( *ppSDL )->cursorTimer )
+      {
+         SDL_RemoveTimer( ( *ppSDL )->cursorTimer );
+      }
       if( ( *ppSDL )->font )
       {
          TTF_CloseFont( ( *ppSDL )->font );
@@ -75,6 +79,7 @@ Garbage Collector SDL_Event
 static HB_GARBAGE_FUNC( hb_sdl_event_Destructor )
 {
    SDL_Event **ppEvent = ( SDL_Event ** ) Cargo;
+
    if( ppEvent && *ppEvent )
    {
       hb_xfree( *ppEvent );
@@ -121,6 +126,10 @@ static void sdl_cleanup( SDL *pSDL )
 {
    if( pSDL )
    {
+      if( pSDL->cursorTimer )
+      {
+         SDL_RemoveTimer( pSDL->cursorTimer );
+      }
       if( pSDL->font )
       {
          TTF_CloseFont( pSDL->font );
@@ -144,7 +153,7 @@ static void sdl_cleanup( SDL *pSDL )
    }
 }
 
-static SDL_Color sdl_hex_to_color( const char *hexColor )
+static SDL_Color sdl_hexToColor( const char *hexColor )
 {
    SDL_Color color = { 0, 0, 0, 255 };
    int r, g, b, a = 255;
@@ -167,7 +176,7 @@ static SDL_Color sdl_hex_to_color( const char *hexColor )
    }
    else
    {
-      fprintf( stderr, "Invalid hex color format: sdl_hex_to_color() - defaulting to gray.\n" );
+      fprintf( stderr, "Invalid hex color format: sdl_hexToColor() - defaulting to gray.\n" );
       color.r = 128;
       color.g = 128;
       color.b = 128;
@@ -238,8 +247,8 @@ static void sdl_DrawFont( SDL *pSdl, int x, int y, const char *string, const cha
          strncpy( bgColorStr, hexColor, 6 );
          bgColorStr[ 6 ] = '\0';
 
-         bgColor = sdl_hex_to_color( bgColorStr );
-         fgColor = sdl_hex_to_color( separator + 1 );
+         bgColor = sdl_hexToColor( bgColorStr );
+         fgColor = sdl_hexToColor( separator + 1 );
       }
    }
 
@@ -284,6 +293,19 @@ static Uint32 sdl_cursorBlinkCallback( Uint32 interval, void *param )
    SDL *pSDL = ( SDL * ) param;
    pSDL->cursorVisible = !pSDL->cursorVisible;
    return interval;
+}
+
+static void sdl_drawCursor( SDL *pSDL )
+{
+   if( pSDL->cursorVisible )
+   {
+      int pixelX = pSDL->cursorCol * FONT_CELL_WIDTH;
+      int pixelY = pSDL->cursorRow * FONT_CELL_HEIGHT;
+
+      SDL_Rect cursorRect = { pixelX, pixelY, 1, 18 };
+      SDL_SetRenderDrawColor( pSDL->renderer, 255, 0, 0, 255 );
+      SDL_RenderFillRect( pSDL->renderer, &cursorRect );
+   }
 }
 
 /* -------------------------------------------------------------------------
@@ -377,7 +399,7 @@ HB_FUNC( SDL_BEGINDRAW )
       SDL_Color bgColor = { 50, 50, 50, 255 };
       if( pSDL->background && strlen( pSDL->background ) > 0 )
       {
-         bgColor = sdl_hex_to_color( pSDL->background );
+         bgColor = sdl_hexToColor( pSDL->background );
       }
 
       SDL_SetRenderDrawColor( pSDL->renderer, bgColor.r, bgColor.g, bgColor.b, bgColor.a );
@@ -389,13 +411,14 @@ HB_FUNC( SDL_BEGINDRAW )
    }
 }
 
-//void sdl_EndDraw( SDL *pSDL )
+// void sdl_EndDraw( SDL *pSDL )
 HB_FUNC( SDL_ENDDRAW )
 {
    if( hb_param( 1, HB_IT_POINTER ) != NULL )
    {
       SDL *pSDL = hb_sdl_Param( 1 );
 
+      sdl_drawCursor( pSDL );
       SDL_RenderPresent( pSDL->renderer );
    }
    else
@@ -552,7 +575,7 @@ HB_FUNC( SDL_LOADFONT )
    }
 }
 
-//void sdl_DrawFont( SDL *pSdl, int x, int y, const char *string, const char *hexColor )
+// void sdl_DrawFont( SDL *pSdl, int x, int y, const char *string, const char *hexColor )
 HB_FUNC( SDL_DRAWFONT )
 {
    if( hb_param( 1, HB_IT_POINTER ) != NULL && hb_param( 2, HB_IT_NUMERIC ) != NULL && hb_param( 3, HB_IT_NUMERIC ) != NULL && hb_param( 4, HB_IT_STRING ) != NULL &&  hb_param( 5, HB_IT_STRING ) != NULL )
@@ -585,8 +608,8 @@ HB_FUNC( SDL_DRAWFONT )
             strncpy( bgColorStr, hexColor, 6 );
             bgColorStr[ 6 ] = '\0';
 
-            bgColor = sdl_hex_to_color( bgColorStr );
-            fgColor = sdl_hex_to_color( separator + 1 );
+            bgColor = sdl_hexToColor( bgColorStr );
+            fgColor = sdl_hexToColor( separator + 1 );
          }
       }
 
@@ -704,7 +727,7 @@ HB_FUNC( SDL_STOPTEXTINPUT )
 }
 
 /* -------------------------------------------------------------------------
-CategoryVideo
+Category Video
 ------------------------------------------------------------------------- */
 // int sdl_MaxCol( SDL *pSdl )
 HB_FUNC( SDL_MAXCOL )
@@ -816,10 +839,44 @@ HB_FUNC( SDL_SETBACKGROUND )
       HB_ERR_ARGS();
    }
 }
+
+// void sdl_setCursorPosition( SDL *pSdl, int col, int row )
+HB_FUNC( SDL_SETCURSORPOSITION )
+{
+   if( hb_param( 1, HB_IT_POINTER ) != NULL && hb_param( 2, HB_IT_NUMERIC ) != NULL && hb_param( 3, HB_IT_NUMERIC ) != NULL )
+   {
+      SDL *pSdl = hb_sdl_Param( 1 );
+      int col = hb_parni( 2 );
+      int row = hb_parni( 3 );
+
+      pSdl->cursorCol = col;
+      pSdl->cursorRow = row;
+   }
+   else
+   {
+      HB_ERR_ARGS();
+   }
+}
+
+// void sdl_setCursorVisible( SDL *pSdl, bool cursorVisible )
+HB_FUNC( SDL_SETCURSORVISIBLE )
+{
+   if( hb_param( 1, HB_IT_POINTER ) != NULL && hb_param( 2, HB_IT_LOGICAL ) != NULL )
+   {
+      SDL *pSdl = hb_sdl_Param( 1 );
+      bool cursorVisible = hb_parl( 2 );
+      pSdl->cursorVisible = cursorVisible;
+   }
+   else
+   {
+      HB_ERR_ARGS();
+   }
+}
+
 /* -------------------------------------------------------------------------
-CategoryMouse
+Category Mouse
 ------------------------------------------------------------------------- */
-//Uint32 sdl_GetMouseState( int *x, int *y );
+// Uint32 sdl_GetMouseState( int *x, int *y );
 HB_FUNC( SDL_GETMOUSESTATE )
 {
    if( hb_param( 1, HB_IT_BYREF ) != NULL && hb_param( 2, HB_IT_BYREF ) != NULL )

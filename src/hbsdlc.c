@@ -19,8 +19,9 @@ HB_FUNC( C_TIME )
 
 HB_FUNC( C_DIFFTIME )
 {
-   time_t startTime = ( time_t ) hb_parnint( 1 );
-   time_t endTime = ( time_t ) hb_parnint( 2 );
-   double diff = difftime( endTime, startTime );
+   time_t time_end = ( time_t ) hb_parnint( 1 );
+   time_t time_beg = ( time_t ) hb_parnint( 2 );
+
+   double diff = difftime( time_end, time_beg );
    hb_retnd( diff );
 }

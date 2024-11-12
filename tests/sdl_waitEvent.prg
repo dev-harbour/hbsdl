@@ -13,7 +13,7 @@ PROCEDURE Main()
    LOCAL sdl
    LOCAL event
 
-   sdl := sdl_CreateWindow( 830, 450, "Test sdl_waitEvent", "" )
+   sdl := sdl_CreateWindow( 830, 450, "Test sdl_waitEvent", "F1F1F1" )
 
    DO WHILE( !quit )
 

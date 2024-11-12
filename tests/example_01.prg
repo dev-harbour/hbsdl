@@ -1,4 +1,7 @@
 /*
+ * Harbour SDL2 (HBSDL) Project
+ * Copyright 2014 - 2024 Rafał Jopek
+ * Website: https://harbour.pl
  *
  */
 

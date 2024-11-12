@@ -14,7 +14,7 @@ PROCEDURE Main()
    LOCAL event
    LOCAL sdl
    LOCAL text
-   LOCAL num_lines
+   LOCAL numLines
    LOCAL i
 
    sdl := sdl_CreateWindow( 830, 450, "Test sdl_DrawBox", "FFFFFF" )
@@ -34,7 +34,7 @@ PROCEDURE Main()
       "╚══╩══╝  └──┴──┘  ╰──┴──╯  ╰──┴──╯  ┗━━┻━━┛  ▗▄▖▛▀▜   └╌╌┘ ╎ ┗╍╍┛ ┋  ▁▂▃▄▅▆▇█",;
       "                                             ▝▀▘▙▄▟" }
 
-   num_lines := Len( text )
+   numLines := Len( text )
 
    DO WHILE( !quit )
 
@@ -72,7 +72,7 @@ PROCEDURE Main()
 
       sdl_BeginDraw( sdl )
 
-         FOR i := 1 TO num_lines
+         FOR i := 1 TO numLines
             sdl_DrawFont( sdl, 1, i -1, text[ i ], "" )
          NEXT
 

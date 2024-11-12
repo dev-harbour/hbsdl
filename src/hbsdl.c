@@ -279,6 +279,13 @@ static void sdl_DrawFont( SDL *pSdl, int x, int y, const char *string, const cha
    }
 }
 
+static Uint32 gt_cursorBlinkCallback( Uint32 interval, void *param )
+{
+   SDL *pSdl = ( SDL * ) param;
+   pSdl->cursorVisible = !pSdl->cursorVisible;
+   return interval;
+}
+
 /* -------------------------------------------------------------------------
 API HBSDL
 ------------------------------------------------------------------------- */

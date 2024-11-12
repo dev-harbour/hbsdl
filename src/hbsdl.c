@@ -972,7 +972,7 @@ HB_FUNC( SDL_REMOVETIMER )
    if( hb_param( 1, HB_IT_NUMERIC ) != NULL )
    {
       SDL_TimerID id = ( SDL_TimerID ) hb_parni( 1 );
-      hb_retl( SDL_RemoveTimer( id ) );
+      hb_retl( ( int ) SDL_RemoveTimer( id ) );
    }
    else
    {

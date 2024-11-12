@@ -873,6 +873,20 @@ HB_FUNC( SDL_SETCURSORVISIBLE )
    }
 }
 
+// SDL_TimerID sdl_cursorTimer( SDL *pSdl )
+HB_FUNC( SDL_CURSORTIMER )
+{
+   if( hb_param( 1, HB_IT_POINTER ) != NULL )
+   {
+      SDL *pSdl = hb_sdl_Param( 1 );
+      hb_retni( pSdl->cursorTimer );
+   }
+   else
+   {
+      HB_ERR_ARGS();
+   }
+}
+
 /* -------------------------------------------------------------------------
 Category Mouse
 ------------------------------------------------------------------------- */
@@ -942,6 +956,23 @@ HB_FUNC( SDL_DRAWBOX )
 
       sdl_DrawFont( pSdl, x + width - 1, y, topRight, hexColor );                  // top-right corner
       sdl_DrawFont( pSdl, x + width - 1, y + height - 1, bottomRight, hexColor );  // bottom-right corner
+   }
+   else
+   {
+      HB_ERR_ARGS();
+   }
+}
+
+/* -------------------------------------------------------------------------
+Category Timer
+------------------------------------------------------------------------- */
+// SDL_bool SDL_RemoveTimer( SDL_TimerID id );
+HB_FUNC( SDL_REMOVETIMER )
+{
+   if( hb_param( 1, HB_IT_NUMERIC ) != NULL )
+   {
+      SDL_TimerID id = ( SDL_TimerID ) hb_parni( 1 );
+      hb_retl( SDL_RemoveTimer( id ) );
    }
    else
    {

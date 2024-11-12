@@ -279,10 +279,10 @@ static void sdl_DrawFont( SDL *pSdl, int x, int y, const char *string, const cha
    }
 }
 
-static Uint32 gt_cursorBlinkCallback( Uint32 interval, void *param )
+static Uint32 sdl_cursorBlinkCallback( Uint32 interval, void *param )
 {
-   SDL *pSdl = ( SDL * ) param;
-   pSdl->cursorVisible = !pSdl->cursorVisible;
+   SDL *pSDL = ( SDL * ) param;
+   pSDL->cursorVisible = !pSDL->cursorVisible;
    return interval;
 }
 
@@ -338,6 +338,10 @@ HB_FUNC( SDL_CREATEWINDOW )
       }
 
       SDL_SetWindowMinimumSize( pSDL->window, width, height );
+
+      // Ustawienie timera do migania kursora
+      pSDL->cursorTimer = SDL_AddTimer( 500, sdl_cursorBlinkCallback, pSDL );
+
 
       hb_sdl_Return( pSDL );
    }

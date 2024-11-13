@@ -303,7 +303,7 @@ static void sdl_drawCursor( SDL *pSDL )
       int pixelY = pSDL->cursorRow * FONT_CELL_HEIGHT;
 
       SDL_Rect cursorRect = { pixelX, pixelY, 1, 18 };
-      SDL_SetRenderDrawColor( pSDL->renderer, 255, 0, 0, 255 );
+      SDL_SetRenderDrawColor( pSDL->renderer, 255, 255, 255, 255 );
       SDL_RenderFillRect( pSDL->renderer, &cursorRect );
    }
 }
@@ -706,7 +706,7 @@ HB_FUNC( SDL_PRINTFONTINFO )
 }
 
 /* -------------------------------------------------------------------------
-CategoryKeyboard
+Category Keyboard
 ------------------------------------------------------------------------- */
 // SDL_Keymod sdl_GetModState( void );
 HB_FUNC( SDL_GETMODSTATE )
@@ -724,6 +724,35 @@ HB_FUNC( SDL_STARTTEXTINPUT )
 HB_FUNC( SDL_STOPTEXTINPUT )
 {
    SDL_StopTextInput();
+}
+
+// const char *sdl_keyChar( SDL_Event *event )
+HB_FUNC( SDL_KEYCHAR )
+{
+   if( hb_param( 1, HB_IT_POINTER ) != NULL )
+   {
+      SDL_Event *pEvent = hb_sdl_event_Param( 1 );
+
+      // Alokujemy bufor na klucz o długości 4 znaków + null terminator
+      char keyChar[ 5 ];
+
+      if( pEvent->type == SDL_TEXTINPUT )
+      {
+         // Kopiujemy maksymalnie 4 znaki do keyChar i dodajemy terminator null
+         strncpy( keyChar, pEvent->text.text, 4 );
+         keyChar[ 4 ] = '\0';
+
+         hb_retc( keyChar );
+      }
+      else
+      {
+         hb_retc( "" );
+      }
+   }
+   else
+   {
+      HB_ERR_ARGS();
+   }
 }
 
 /* -------------------------------------------------------------------------

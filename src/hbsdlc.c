@@ -25,3 +25,14 @@ HB_FUNC( C_DIFFTIME )
    double diff = difftime( time_end, time_beg );
    hb_retnd( diff );
 }
+
+HB_FUNC( C_PERROR )
+{
+   perror( hb_parc( 1 ) );
+}
+
+HB_FUNC( C_SYSTEM )
+{
+   hb_retni( system( hb_parc( 1 ) ) );
+}
+

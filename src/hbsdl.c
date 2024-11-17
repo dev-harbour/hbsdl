@@ -11,7 +11,7 @@
 #undef hb_xgrab
 #undef hb_xfree
 
-#define MAX_RECORDS 6024
+#define MAX_RECORDS 1024
 
 static MR mr[ MAX_RECORDS ];
 static size_t currentAllocations = 0;

@@ -7,6 +7,68 @@
 
 #include "hbsdl.h"
 
+// Wyłącz/Włącz makra malloc i free na czas definiowania funkcji
+#undef hb_xgrab
+#undef hb_xfree
+
+#define MAX_RECORDS 6024
+
+static MR mr[ MAX_RECORDS ];
+static size_t currentAllocations = 0;
+static size_t totalAllocated = 0;
+static size_t totalFreed = 0;
+
+void *debug_malloc( size_t size, const char *file, int line )
+{
+   void *ptr = hb_xgrab( size );
+   if( ptr && currentAllocations < MAX_RECORDS )
+   {
+      mr[ currentAllocations++ ] = ( MR ) { ptr, size, file, line };
+      totalAllocated += size;
+   }
+   printf( "[ALLOC] Ptr: %p, Size: %zu, File: %s, Line: %d\n", ptr, size, file, line );
+   return ptr;
+}
+
+void debug_free( void *ptr, const char *file, int line )
+{
+   for( size_t i = 0; i < currentAllocations; ++i )
+   {
+      if( mr[ i ].ptr == ptr )
+      {
+         totalFreed += mr[ i ].size;
+         printf( "[FREE] Ptr: %p, Size: %zu, File: %s, Line: %d\n", ptr, mr[ i ].size, mr[ i ].file, mr[ i ].line );
+         memmove( &mr[ i ], &mr[ i + 1 ], ( currentAllocations - i - 1 ) * sizeof( MR ) );
+         --currentAllocations;
+         break;
+      }
+   }
+   hb_xfree( ptr );
+   UNUSED( file );
+   UNUSED( line );
+}
+
+void debug_memory_report( void )
+{
+   printf( "\n[MEMORY REPORT]\n" );
+   printf( "Total Allocated: %zu bytes\n", totalAllocated );
+   printf( "Total Freed: %zu bytes\n", totalFreed );
+   printf( "Currently Allocated: %zu bytes in %zu blocks\n", totalAllocated - totalFreed, currentAllocations );
+   if( currentAllocations > 0 )
+   {
+      printf( "Unfreed blocks:\n" );
+      for( size_t i = 0; i < currentAllocations; ++i )
+      {
+         printf( "  Ptr: %p, Size: %zu, File: %s, Line: %d\n", mr[ i ].ptr, mr[ i ].size, mr[ i ].file, mr[ i ].line );
+      }
+   }
+   else
+   {
+      printf( "All memory has been freed.\n" );
+   }
+   printf( "\n" );
+}
+
 /* -------------------------------------------------------------------------
 Garbage Collector SDL
 ------------------------------------------------------------------------- */

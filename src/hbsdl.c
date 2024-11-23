@@ -166,11 +166,34 @@ SDL_Event *hb_sdl_event_Param( int iParam )
    return NULL;
 }
 
+SDL_Event *hb_sdl_event_ParamGet( int iParam )
+{
+   SDL_Event **ppSDL_Event = ( SDL_Event ** ) hb_parptrGC( &s_gc_sdl_event_Funcs, iParam );
+
+   return ppSDL_Event ? *ppSDL_Event : NULL;
+}
+
+SDL_Event *hb_sdl_event_ItemGet( PHB_ITEM pItem )
+{
+   SDL_Event **ppSDL_Event = ( SDL_Event ** ) hb_itemGetPtrGC( pItem, &s_gc_sdl_event_Funcs );
+
+   return ppSDL_Event ? *ppSDL_Event : NULL;
+}
+
 PHB_ITEM hb_sdl_event_ItemPut( PHB_ITEM pItem, SDL_Event *pSDL_Event )
 {
    SDL_Event **ppSDL_Event = ( SDL_Event ** ) hb_gcAllocate( sizeof( SDL_Event * ), &s_gc_sdl_event_Funcs );
+
    *ppSDL_Event = pSDL_Event;
    return hb_itemPutPtrGC( pItem, ppSDL_Event );
+}
+
+void hb_sdl_event_ItemClear( PHB_ITEM pItem )
+{
+   SDL_Event **ppSDL_Event = ( SDL_Event ** ) hb_itemGetPtrGC( pItem, &s_gc_sdl_event_Funcs );
+
+   if( ppSDL_Event )
+      *ppSDL_Event = NULL;
 }
 
 static void hb_sdl_event_Return( SDL_Event *pSDL_Event )
@@ -407,7 +430,7 @@ HB_FUNC( SDL_CREATEWINDOW )
          sdl_cleanup( pSDL );
       }
 
-      pSDL->window = SDL_CreateWindow( title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE );
+      pSDL->window = SDL_CreateWindow( title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI | SDL_WINDOW_RESIZABLE );
       if( !pSDL->window )
       {
          fprintf( stderr, "Could not create window: %s\n", SDL_GetError() );
@@ -426,7 +449,6 @@ HB_FUNC( SDL_CREATEWINDOW )
       // Ustawienie timera do migania kursora
       pSDL->cursorTimer = SDL_AddTimer( 500, sdl_cursorBlinkCallback, pSDL );
 
-
       hb_sdl_Return( pSDL );
    }
    else
@@ -442,13 +464,20 @@ HB_FUNC( SDL_BEGINDRAW )
    {
       SDL *pSDL = hb_sdl_Param( 1 );
 
+      int renderWidth, renderHeight;
       int newWidth, newHeight;
+      float scaleWidth, scaleHeight;
       int newWidthPos, newHeightPos;
       int newMouseX, newMouseY;
 
+      SDL_GetRendererOutputSize( pSDL->renderer, &renderWidth, &renderHeight );
       SDL_GetWindowSize( pSDL->window, &newWidth, &newHeight );
       pSDL->width = newWidth;
       pSDL->height = newHeight;
+
+      scaleWidth = ( float ) renderWidth / ( float ) newWidth ;
+      scaleHeight = ( float ) renderHeight / ( float ) newHeight ;
+      SDL_RenderSetScale( pSDL->renderer, scaleWidth, scaleHeight );
 
       SDL_GetWindowPosition( pSDL->window, &newWidthPos, &newHeightPos );
       pSDL->widthPos = newWidthPos;

@@ -397,7 +397,7 @@ static void sdl_drawCursor( SDL *pSDL )
 API HBSDL
 ------------------------------------------------------------------------- */
 // SDL *sdl_CreateWindow( int width, int height, const char *title, const char *hexColor )
-HB_FUNC( SDL_CREATEWINDOW )
+HB_FUNC( CREATEWINDOW )
 {
    if( hb_param( 1, HB_IT_NUMERIC ) != NULL && hb_param( 2, HB_IT_NUMERIC ) != NULL &&  hb_param( 3, HB_IT_STRING ) != NULL &&  hb_param( 4, HB_IT_STRING ) != NULL )
    {

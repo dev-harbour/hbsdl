@@ -1,6 +1,6 @@
 # hbsdl - Simple DirectMedia Layer for Harbour
 
-`hbsdl` is a set of language bindings for Harbour, based on the SDL (Simple DirectMedia Layer) library. The goal of the project is to simplify the development
+`hbsdl` is a set of language bindings for Harbour, based on the SDL (Simple DirectMedia Layer) library 2.30.8. The goal of the project is to simplify the development
 of multimedia applications, games, and interactive programs in the Harbour environment.
 
 The `hbsdl` bindings are not a direct 1:1 mapping of SDL functions but are designed to make writing code easier, allowing developers to quickly and efficiently

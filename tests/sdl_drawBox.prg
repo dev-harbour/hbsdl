@@ -17,7 +17,7 @@ PROCEDURE Main()
    LOCAL numLines
    LOCAL i
 
-   sdl := sdl_CreateWindow( 830, 450, "Test sdl_DrawBox", "FFFFFF" )
+   sdl := CreateWindow( 830, 450, "Test sdl_DrawBox", "FFFFFF" )
 
    sdl_LoadFont( sdl, "../docs/assets/font/9x18.pcf.gz", 18 );
 

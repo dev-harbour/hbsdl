@@ -16,13 +16,13 @@ PROCEDURE Main()
    LOCAL lastEventTime
    LOCAL currentTime
 
-   sdl := sdl_CreateWindow( 830, 450, "Test Cursor Delay", "F1F1F1" )
+   sdl := CreateWindow( 830, 450, "Test Cursor Delay", "F1F1F1" )
 
-   lastEventTime := c_time()
+   lastEventTime := c_time( NIL )
 
    DO WHILE( !quit )
 
-      currentTime := c_time()
+      currentTime := c_time( NIL )
 
       IF( waitMode .OR. c_difftime( currentTime, lastEventTime ) >= 10 )
 
@@ -74,7 +74,7 @@ PROCEDURE Main()
          ENDDO
       ENDIF
       // Po 10 sekundach bez zdarzeń wróć do trybu `WaitEvent`
-      IF( c_difftime( c_time(), lastEventTime ) >= 10 )
+      IF( c_difftime( c_time( NIL ), lastEventTime ) >= 10 )
          waitMode := .T.
       ENDIF
 

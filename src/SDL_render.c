@@ -79,6 +79,29 @@ void hb_sdl_renderer_Return( SDL_Renderer *pSDL_Renderer )
 }
 
 /* -------------------------------------------------------------------------
+Harbour Implementation
+------------------------------------------------------------------------- */
+// int SDL_RendererFlags( [ flags... ] )
+HB_FUNC( SDL_RENDERERFLAGS )
+{
+   Uint32 flags = 0;
+   int argc = hb_pcount();
+
+   for( int i = 1; i <= argc; i++ )
+   {
+      if( hb_param( i, HB_IT_NUMERIC ) != NULL )
+      {
+         flags |= ( Uint32 ) hb_parni( i );
+      }
+      else
+      {
+         HB_ERR_ARGS();
+      }
+   }
+   hb_retni( flags );
+}
+
+/* -------------------------------------------------------------------------
 SDL API
 ------------------------------------------------------------------------- */
 
@@ -147,15 +170,26 @@ HB_FUNC( SDL_CREATERENDERER )
 // int SDL_SetRenderDrawColor(SDL_Renderer * renderer, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
 HB_FUNC( SDL_SETRENDERDRAWCOLOR )
 {
-   if( hb_param( 1, HB_IT_POINTER ) != NULL && hb_param( 2, HB_IT_NUMERIC ) != NULL && hb_param( 3, HB_IT_NUMERIC ) != NULL && hb_param( 4, HB_IT_NUMERIC ) != NULL && hb_param( 5, HB_IT_NUMERIC ) != NULL )
+   if( hb_param( 1, HB_IT_POINTER ) != NULL &&
+       hb_param( 2, HB_IT_NUMERIC ) != NULL &&
+       hb_param( 3, HB_IT_NUMERIC ) != NULL &&
+       hb_param( 4, HB_IT_NUMERIC ) != NULL &&
+       hb_param( 5, HB_IT_NUMERIC ) != NULL )
    {
       SDL_Renderer *pRenderer = hb_sdl_renderer_Param( 1 );
-      Uint8 r = ( Uint8 ) hb_parni( 2 );
-      Uint8 g = ( Uint8 ) hb_parni( 3 );
-      Uint8 b = ( Uint8 ) hb_parni( 4 );
-      Uint8 a = ( Uint8 ) hb_parni( 5 );
+      int r = hb_parni( 2 );
+      int g = hb_parni( 3 );
+      int b = hb_parni( 4 );
+      int a = hb_parni( 5 );
 
-      hb_retni( SDL_SetRenderDrawColor( pRenderer, r, g, b, a ) );
+      if( r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255 || a < 0 || a > 255 )
+      {
+         HB_ERR_ARGS();
+      }
+      else
+      {
+         hb_retni( SDL_SetRenderDrawColor( pRenderer, ( Uint8 ) r, ( Uint8 ) g, ( Uint8 ) b, ( Uint8 ) a ) );
+      }
    }
    else
    {
@@ -181,7 +215,6 @@ HB_FUNC( SDL_RENDERCLEAR )
       HB_ERR_ARGS();
    }
 }
-
 
 // int SDL_RenderDrawPoint(SDL_Renderer * renderer, int x, int y);
 // int SDL_RenderDrawPoints(SDL_Renderer * renderer, const SDL_Point * points, int count);

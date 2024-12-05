@@ -33,6 +33,27 @@ static HB_GARBAGE_FUNC( hb_sdl_window_Destructor )
    {
       SDL_DestroyWindow( *ppSDL_Window );
 
+      Uint32 subsystems = SDL_WasInit( 0 );
+      Uint32 sdlFlags[] =
+      {
+         SDL_INIT_TIMER,
+         SDL_INIT_AUDIO,
+         SDL_INIT_VIDEO,
+         SDL_INIT_JOYSTICK,
+         SDL_INIT_HAPTIC,
+         SDL_INIT_GAMECONTROLLER,
+         SDL_INIT_EVENTS,
+         SDL_INIT_SENSOR
+      };
+
+      for( size_t i = 0; i < sizeof( sdlFlags ) / sizeof( sdlFlags[ 0 ] ); i++ )
+      {
+         if( subsystems & sdlFlags[ i ] )
+         {
+            SDL_QuitSubSystem( sdlFlags[ i ] );
+         }
+      }
+
       SDL_Quit();
 
       *ppSDL_Window = NULL;
@@ -83,7 +104,7 @@ void hb_sdl_window_Return( SDL_Window *pSDL_Window )
 /* -------------------------------------------------------------------------
 Harbour Implementation
 ------------------------------------------------------------------------- */
-// int SDL_WindowFlags( [flags...] )
+// int SDL_WindowFlags( [ flags... ] )
 HB_FUNC( SDL_WINDOWFLAGS )
 {
    Uint32 flags = 0;
@@ -91,17 +112,15 @@ HB_FUNC( SDL_WINDOWFLAGS )
 
    for( int i = 1; i <= argc; i++ )
    {
-      if( hb_param( i, HB_IT_INTEGER ) != NULL )
+      if( hb_param( i, HB_IT_NUMERIC ) != NULL )
       {
          flags |= ( Uint32 ) hb_parni( i );
       }
       else
       {
          HB_ERR_ARGS();
-         return;
       }
    }
-
    hb_retni( flags );
 }
 
@@ -136,11 +155,11 @@ SDL API
 HB_FUNC( SDL_CREATEWINDOW )
 {
    if( hb_param( 1, HB_IT_STRING ) != NULL &&
-       hb_param( 2, HB_IT_INTEGER ) != NULL &&
-       hb_param( 3, HB_IT_INTEGER ) != NULL &&
-       hb_param( 4, HB_IT_INTEGER ) != NULL &&
-       hb_param( 5, HB_IT_INTEGER ) != NULL &&
-       hb_param( 6, HB_IT_INTEGER ) != NULL )
+       hb_param( 2, HB_IT_NUMERIC ) != NULL &&
+       hb_param( 3, HB_IT_NUMERIC ) != NULL &&
+       hb_param( 4, HB_IT_NUMERIC ) != NULL &&
+       hb_param( 5, HB_IT_NUMERIC ) != NULL &&
+       hb_param( 6, HB_IT_NUMERIC ) != NULL )
    {
       hb_sdl_window_Return( SDL_CreateWindow( hb_parc( 1 ), hb_parni( 2 ), hb_parni( 3 ), hb_parni( 4 ), hb_parni( 5 ), ( Uint32 ) hb_parni( 6 ) ) );
    }

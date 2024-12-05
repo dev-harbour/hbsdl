@@ -2,10 +2,10 @@
 #define SDL_EVENTS_CH_
 
 /* General keyboard/mouse state definitions */
-#define SDL_RELEASED    0
-#define SDL_PRESSED     1
+#define SDL_RELEASED                 0
+#define SDL_PRESSED                  1
 
-#define SDL_FIRSTEVENT  0
+#define SDL_FIRSTEVENT               0
 
 /* Application events */
 #define SDL_QUIT                     0x100
@@ -95,5 +95,14 @@
 
 #define SDL_USEREVENT                0x8000
 #define SDL_LASTEVENT                0xFFFF
+
+#define SDL_ADDEVENT                 0
+#define SDL_PEEKEVENT                1
+#define SDL_GETEVENT                 2
+
+#define SDL_QUERY                   -1
+#define SDL_IGNORE                   0
+#define SDL_DISABLE                  0
+#define SDL_ENABLE                   1
 
 #endif /* End SDL_EVENTS_CH_ */

@@ -57,6 +57,10 @@ struct _SDL
 };
 
 HB_EXTERN_BEGIN
+extern SDL_Window *hb_sdl_window_Param( int iParam );
+extern PHB_ITEM    hb_sdl_window_ItemPut( PHB_ITEM pItem, SDL_Window *pSDL_Window );
+extern void        hb_sdl_window_Return( SDL_Window *pSDL_Window );
+
 extern void *debug_malloc( size_t size, const char *file, int line );
 extern void  debug_free( void *ptr, const char *file, int line );
 extern void  debug_memory_report( void );

@@ -47,7 +47,6 @@ PROCEDURE Main()
       RETURN
    ENDIF
 
-
    DO WHILE( !lQuit )
 
       sdl_WaitEvent( @pEvent )

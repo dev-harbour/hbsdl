@@ -1,6 +1,8 @@
 #ifndef HBSDL_H_
 #define HBSDL_H_
 
+#include <stdio.h>
+#include <stdarg.h>
 #include <time.h>
 
 #include <SDL2/SDL.h>
@@ -61,17 +63,18 @@ extern SDL_Window *hb_sdl_window_Param( int iParam );
 extern PHB_ITEM    hb_sdl_window_ItemPut( PHB_ITEM pItem, SDL_Window *pSDL_Window );
 extern void        hb_sdl_window_Return( SDL_Window *pSDL_Window );
 
-extern void *debug_malloc( size_t size, const char *file, int line );
-extern void  debug_free( void *ptr, const char *file, int line );
-extern void  debug_memory_report( void );
+extern SDL_Event  *hb_sdl_event_Param( int iParam );
+extern SDL_Event  *hb_sdl_event_ParamGet( int iParam );
+extern SDL_Event  *hb_sdl_event_ItemGet( PHB_ITEM pItem );
+extern PHB_ITEM    hb_sdl_event_ItemPut( PHB_ITEM pItem, SDL_Event *pSDL_Event );
+extern void        hb_sdl_event_ItemClear( PHB_ITEM pItem );
+extern void        hb_sdl_event_StorPtr( SDL_Event *pSDL_Event, int iParam );
+extern void        hb_sdl_event_Return( SDL_Event *pSDL_Event );
 HB_EXTERN_END
 
 /* -------------------------------------------------------------------------
 Macro Definitions
 ------------------------------------------------------------------------- */
-#define hb_xgrab( size ) debug_malloc( size, __FILE__, __LINE__ )
-#define hb_xfree( ptr ) debug_free( ptr, __FILE__, __LINE__ )
-
 #define HB_ERR_ARGS() ( hb_errRT_BASE_SubstR( EG_ARG, 3012, NULL, HB_ERR_FUNCNAME, HB_ERR_ARGS_BASEPARAMS ) )
 
 #define MAX( a, b ) \

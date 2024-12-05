@@ -17,7 +17,7 @@
  */
 
 #include "hbsdl.ch"
-
+/* TODO */
 PROCEDURE Main()
 
    LOCAL quit := .F.
@@ -39,7 +39,7 @@ PROCEDURE Main()
 
          // Wyświetl kursor na stałe i włącz tryb `WaitEvent`
          sdl_setCursorVisible( sdl, .T. )
-         event := sdl_WaitEvent()
+         sdl_WaitEvent( @event)
 
          IF( event != NIL )
             lastEventTime := currentTime // Ustaw czas dla aktywności
@@ -48,7 +48,7 @@ PROCEDURE Main()
 
       ELSE
          // Przechwytywanie zdarzeń w trybie `PollEvent`
-         DO WHILE( ( event := sdl_PollEvent() ) != NIL )
+         DO WHILE( sdl_PollEvent( @event ) )
 
             lastEventTime := currentTime // Zaktualizuj czas dla aktywności
 

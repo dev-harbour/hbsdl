@@ -17,7 +17,7 @@
  */
 
 #include "hbsdl.ch"
-
+/* TODO */
 PROCEDURE Main()
 
    LOCAL quit := .F.
@@ -58,7 +58,7 @@ PROCEDURE Main()
 
    DO WHILE( !quit )
 
-      event := sdl_WaitEvent()
+      sdl_WaitEvent( @event )
 
       SWITCH( sdl_EventType( event ) )
 

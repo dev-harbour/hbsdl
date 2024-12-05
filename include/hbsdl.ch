@@ -1,6 +1,7 @@
 #ifndef HBSDL_CH_
 #define HBSDL_CH_
 
+#include "SDL_error.ch"
 #include "SDL_events.ch"
 #include "SDL_hbsdlbox.ch"
 #include "SDL_hints.ch"

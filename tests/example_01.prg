@@ -17,7 +17,7 @@
  */
 
 #include "hbsdl.ch"
-
+/* TODO */
 PROCEDURE Main()
 
    LOCAL quit := .F.
@@ -28,7 +28,7 @@ PROCEDURE Main()
 
    DO WHILE( !quit )
 
-      event := sdl_WaitEvent()
+      sdl_WaitEvent( @event )
 
       IF( event != NIL )
 
@@ -65,7 +65,7 @@ PROCEDURE Main()
             ENDSWITCH
 
             // Sprawdzamy kolejne zdarzenia w kolejce
-            event := sdl_PollEvent()
+            sdl_PollEvent( @event )
 
          ENDDO
       ENDIF

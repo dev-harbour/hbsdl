@@ -831,20 +831,3 @@ HB_FUNC( SDL_DRAWBOX )
       HB_ERR_ARGS();
    }
 }
-
-/* -------------------------------------------------------------------------
-Category Timer
-------------------------------------------------------------------------- */
-// SDL_bool SDL_RemoveTimer( SDL_TimerID id );
-HB_FUNC( SDL_REMOVETIMER )
-{
-   if( hb_param( 1, HB_IT_NUMERIC ) != NULL )
-   {
-      SDL_TimerID id = ( SDL_TimerID ) hb_parni( 1 );
-      hb_retl( ( int ) SDL_RemoveTimer( id ) );
-   }
-   else
-   {
-      HB_ERR_ARGS();
-   }
-}

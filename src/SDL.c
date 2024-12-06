@@ -25,7 +25,7 @@
 /* -------------------------------------------------------------------------
 Harbour Implementation
 ------------------------------------------------------------------------- */
-// void sdl_print_initialized_subsystems( void )
+// void SDL_print_initialized_subsystems( void )
 HB_FUNC( SDL_PRINT_INITIALIZED_SUBSYSTEMS )
 {
    Uint32 subsystems = SDL_WasInit( 0 );

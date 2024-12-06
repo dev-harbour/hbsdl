@@ -1,0 +1,33 @@
+#ifndef SDL_MOUSE_CH_
+#define SDL_MOUSE_CH_
+
+#define SDL_SYSTEM_CURSOR_ARROW          0
+#define SDL_SYSTEM_CURSOR_IBEAM          1
+#define SDL_SYSTEM_CURSOR_WAIT           2
+#define SDL_SYSTEM_CURSOR_CROSSHAIR      3
+#define SDL_SYSTEM_CURSOR_WAITARROW      4
+#define SDL_SYSTEM_CURSOR_SIZENWSE       5
+#define SDL_SYSTEM_CURSOR_SIZENESW       6
+#define SDL_SYSTEM_CURSOR_SIZEWE         7
+#define SDL_SYSTEM_CURSOR_SIZENS         8
+#define SDL_SYSTEM_CURSOR_SIZEALL        9
+#define SDL_SYSTEM_CURSOR_NO             10
+#define SDL_SYSTEM_CURSOR_HAND           11
+#define SDL_NUM_SYSTEM_CURSORS           12
+
+#define SDL_MOUSEWHEEL_NORMAL            0
+#define SDL_MOUSEWHEEL_FLIPPED           1
+
+#define SDL_BUTTON( X )     hb_BitShift( 1, ( ( X ) -1 ) )
+#define SDL_BUTTON_LEFT     1
+#define SDL_BUTTON_MIDDLE   2
+#define SDL_BUTTON_RIGHT    3
+#define SDL_BUTTON_X1       4
+#define SDL_BUTTON_X2       5
+#define SDL_BUTTON_LMASK    SDL_BUTTON( SDL_BUTTON_LEFT )
+#define SDL_BUTTON_MMASK    SDL_BUTTON( SDL_BUTTON_MIDDLE )
+#define SDL_BUTTON_RMASK    SDL_BUTTON( SDL_BUTTON_RIGHT )
+#define SDL_BUTTON_X1MASK   SDL_BUTTON( SDL_BUTTON_X1 )
+#define SDL_BUTTON_X2MASK   SDL_BUTTON( SDL_BUTTON_X2 )
+
+#endif /* End SDL_MOUSE_CH_ */

@@ -775,25 +775,6 @@ HB_FUNC( SDL_CURSORTIMER )
    }
 }
 
-/* -------------------------------------------------------------------------
-Category Mouse
-------------------------------------------------------------------------- */
-// Uint32 sdl_GetMouseState( int *x, int *y );
-HB_FUNC( SDL_GETMOUSESTATE )
-{
-   if( hb_param( 1, HB_IT_BYREF ) != NULL && hb_param( 2, HB_IT_BYREF ) != NULL )
-   {
-      int x, y;
-      hb_retnint( SDL_GetMouseState( &x, &y ) );
-      hb_storni( x, 1 );
-      hb_storni( y, 2 );
-   }
-   else
-   {
-      HB_ERR_ARGS();
-   }
-}
-
 /* ------------------------------------------------------------------------- */
 // void sdl_DrawBox( SDL *pSdl, int x, int y, int width, int height, const char *boxString, const char *hexColor )
 HB_FUNC( SDL_DRAWBOX )

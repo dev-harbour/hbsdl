@@ -15,7 +15,6 @@
 #define FONT_CELL_WIDTH   9
 #define FONT_CELL_HEIGHT 18
 
-typedef struct _MR   MR; // Memory Record
 typedef struct _SDL SDL;
 
 typedef enum _bool bool;
@@ -24,14 +23,6 @@ enum _bool
 {
    F = 0,
    T = ( ! 0 )
-};
-
-struct _MR
-{
-   void       *ptr;
-   size_t      size;
-   const char *file;
-   int         line;
 };
 
 struct _SDL

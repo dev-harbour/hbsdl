@@ -1,7 +1,6 @@
 #ifndef SDL_SCANCODE_CH_
 #define SDL_SCANCODE_CH_
 
-
 #define SDL_SCANCODE_UNKNOWN 0
 
 #define SDL_SCANCODE_A                  4

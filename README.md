@@ -14,3 +14,10 @@ The project is in active development, and its functionality is constantly expand
 Sample Text [sdl_drawFont.prg](tests/sdl_drawFont.prg)
 
 ![sdl_drawFont](docs/assets/img/sdl_drawFont.png)
+
+### SDL License
+This project uses the SDL library, which is:
+- Copyright (C) 1997-2024 Sam Lantinga.
+- Licensed under the zlib license.
+
+For more details about SDL, visit the [official SDL repository](https://github.com/libsdl-org/SDL).
